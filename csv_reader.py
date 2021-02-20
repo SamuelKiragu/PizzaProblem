@@ -9,6 +9,7 @@ class Pizza:
     def __init__(self, numb, toppings):
         self.numb = numb
         self.toppings = toppings
+        self.topping_no = len(self.toppings)
 
     def __repr__(self):
         return f'{self.numb},{self.toppings}'
@@ -27,10 +28,10 @@ with open('a_example') as csv_file:
     count = 0
     for row in csv_reader:
         if count == 0:
-            i = count
-            while i < 4 in row:
-                info[i] = col
-                i += 1
+            index = count
+            for col in row:
+                info[index] = col
+                index += 1
         else:
             # create a pizza object and add it to the list of pizzas
             pizza_arr.append(Pizza(row[0], [i for i in row if not(row.index(i) == 0)]))
