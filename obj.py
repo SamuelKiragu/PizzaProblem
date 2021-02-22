@@ -16,7 +16,7 @@ class Pizza:
 
     # printable form of the object
     def __repr__(self):
-        return f"pizza with {len(self.ingridients)}"
+        return f"pizza with {len(self.ingridients)} ingridients"
 
 
 class Pizzeria:
@@ -70,6 +70,7 @@ class Pizzeria:
     # select pizzas
     def slctPizz(self, pz_list, tm_list):
         # TODO WRITE RECURSIVE CODE HERE
+        print(pz_list[0])
         return
 
     # printable form of the object
@@ -109,4 +110,4 @@ class Team:
 
 if __name__ == "__main__":
     pizzeria = Pizzeria('a_example')
-    print(pizzeria.ingrid_indx)
+    pizzeria.slctPizz(pizzeria.piz_lst, pizzeria.tm_lst)
