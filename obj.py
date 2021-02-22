@@ -1,3 +1,44 @@
+class FileReader:
+    def __init__(self):
+        print("created file reader")
+    def read(self,file):
+        import csv
+        tp_no = 0 #total number of pizzas
+        tm_no = {} # team array [0]
+        piz_lst = []
+        tm_lst = []
+        ingrid_indx = {}
+
+        # read file as csv
+        with open(file) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=" ")
+            r = 1
+            for row in csv_reader:
+                # r is added in the if
+                # there is no need to increment it
+                # after its usage there
+                if r == 1:
+                    for i in range(4):
+                        if i == 0:
+                            tp_no = int(row[i])
+                        else:
+                            tm_no[i+1] = int(row[i])
+                    r += 1
+                    continue
+                # add pizza to the piz_lst
+                piz_lst.append(Pizza(row[0], [i for i in row if not(row.index(i) == 0)]))
+                # update ingrid_indx
+                for ingrid in piz_lst[-1].ingridients:
+                    if not(ingrid in ingrid_indx):
+                        ingrid_indx[ingrid] = []
+                    ingrid_indx[ingrid].append(len(piz_lst) - 1)
+        # add team objects
+        for n in tm_no.items():
+            for i in range(n[1]):
+                tm_lst.append(Team(n[0]))
+        print("SUCCESS: READ FILE!")
+        return piz_lst, tm_lst, ingrid_indx, tp_no, tm_no
+
 class Pizza:
     def __init__(self, piz_numb, ingrid_list):
         self.quantity = piz_numb
@@ -18,16 +59,14 @@ class Pizza:
     def __repr__(self):
         return f"pizza with {len(self.ingridients)} ingridients"
 
-
 class Pizzeria:
     def __init__(self, file):
         import csv
-
         self.piz_lst = [] # list of pizzas available
         self.tm_lst = [] # list of teams
-        self.ingrid_indx = {} # index system that shows an ingridient the pizzas they are in
-        self.tp_no = 0 # total number of pizzas
-        self.tm_no = {} # [0]: team of two, [1]: team of three, [2]: team of three
+        self.ingrid_indx = {} # index system(dictionary) that shows an ingridient the pizzas they are in
+        self.tp_no = 0# total number of pizzas
+        self.tm_no = {}# dictionary[0]: team of two, [1]: team of three, [2]: team of three
 
         # read file as csv
         with open(file) as csv_file:
@@ -55,7 +94,7 @@ class Pizzeria:
         # add team objects
         for n in self.tm_no.items():
             for i in range(n[1]):
-                self.tm_lst.append(Team(n[0]))
+                tm_lst.append(Team(n[0]))
 
     # returns number of
     # pizzas available
@@ -68,9 +107,11 @@ class Pizzeria:
         return self.tm_no[no]
 
     # select pizzas
-    def slctPizz(self, pz_list, tm_list):
+    def slctPizz(self, piz_list, tm_list):
         # TODO WRITE RECURSIVE CODE HERE
-        print(pz_list[0])
+        piz_list[0].ingridients.pop(0)
+        print(len(piz_list[0].ingridients))
+        print(len(self.piz_lst[0].ingridients))
         return
 
     # printable form of the object
@@ -109,5 +150,10 @@ class Team:
         return f"""Team of {self.memb_no} members created"""
 
 if __name__ == "__main__":
+    data = FileReader().read('a_example') #reads file and returns the data in usable format
+
+    piz_lst = data[0] # copy list of pizzas
+    tm_lst = data[1] # copy list of teams
     pizzeria = Pizzeria('a_example')
-    pizzeria.slctPizz(pizzeria.piz_lst, pizzeria.tm_lst)
+    # print(pizzeria.piz_lst)
+    pizzeria.slctPizz(data[0],data[1])
