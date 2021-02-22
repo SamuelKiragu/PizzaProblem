@@ -61,40 +61,12 @@ class Pizza:
 
 class Pizzeria:
     def __init__(self, file):
-        import csv
-        self.piz_lst = [] # list of pizzas available
-        self.tm_lst = [] # list of teams
-        self.ingrid_indx = {} # index system(dictionary) that shows an ingridient the pizzas they are in
-        self.tp_no = 0# total number of pizzas
-        self.tm_no = {}# dictionary[0]: team of two, [1]: team of three, [2]: team of three
-
-        # read file as csv
-        with open(file) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=" ")
-            r = 1
-            for row in csv_reader:
-                # r is added in the if
-                # there is no need to increment it
-                # after its usage there
-                if r == 1:
-                    for i in range(4):
-                        if i == 0:
-                            self.tp_no = int(row[i])
-                        else:
-                            self.tm_no[i+1] = int(row[i])
-                    r += 1
-                    continue
-                # add pizza to the piz_lst
-                self.piz_lst.append(Pizza(row[0], [i for i in row if not(row.index(i) == 0)]))
-                # update ingrid_indx
-                for ingrid in self.piz_lst[-1].ingridients:
-                    if not(ingrid in self.ingrid_indx):
-                        self.ingrid_indx[ingrid] = []
-                    self.ingrid_indx[ingrid].append(len(self.piz_lst) - 1)
-        # add team objects
-        for n in self.tm_no.items():
-            for i in range(n[1]):
-                tm_lst.append(Team(n[0]))
+        data = FileReader().read(file)
+        self.piz_lst = data[0] # list of pizzas available
+        self.tm_lst = data[1] # list of teams
+        self.ingrid_indx = data[2] # index system that shows an ingridient the pizzas they are in
+        self.tp_no = data[3] # total number of pizzas
+        self.tm_no = data[4] # [0]: team of two, [1]: team of three, [2]: team of three
 
     # returns number of
     # pizzas available
@@ -151,9 +123,5 @@ class Team:
 
 if __name__ == "__main__":
     data = FileReader().read('a_example') #reads file and returns the data in usable format
-
-    piz_lst = data[0] # copy list of pizzas
-    tm_lst = data[1] # copy list of teams
     pizzeria = Pizzeria('a_example')
-    # print(pizzeria.piz_lst)
     pizzeria.slctPizz(data[0],data[1])
