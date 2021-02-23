@@ -40,10 +40,12 @@ class FileReader:
         return piz_lst, tm_lst, ingrid_indx, tp_no, tm_no
 
 class Pizza:
+    counter = 0
     def __init__(self, piz_numb, ingrid_list):
+        self.id = Pizza.counter
         self.quantity = piz_numb
         self.ingridients = ingrid_list
-
+        Pizza.counter += 1
     # returns the number of ingridients
     def getIngridNo(self):
         return len(self.ingridients)
@@ -57,7 +59,7 @@ class Pizza:
 
     # printable form of the object
     def __repr__(self):
-        return f"pizza with {len(self.ingridients)} ingridients"
+        return f"pizza with id {self.id}"
 
 class Pizzeria:
     def __init__(self, file):
@@ -67,6 +69,47 @@ class Pizzeria:
         self.ingrid_indx = data[2] # index system that shows an ingridient the pizzas they are in
         self.tp_no = data[3] # total number of pizzas
         self.tm_no = data[4] # [0]: team of two, [1]: team of three, [2]: team of three
+
+    # calculates heuristics
+    def calc_h(self,srted_piz,aw_arr,piz_list):
+        import operator
+
+        # if true calculate heuristics,h
+        # calculate and use heuristics to select pizza
+        # equation x(s_a/b_a) against y(o_p/s_a)
+        # slope equation: y = 0.5x
+
+        # array to hold pizzas sorted
+        # with heuristics
+        h1 = []
+        for i in srted_piz:
+            s_a = len(self.piz_lst[i.id].ingridients) #value of initial small array
+            b_a = len(aw_arr[1]) #value of initial big array
+            o_p = len(i.ingridients) #value of current array
+
+            # in order to be accepted,
+            # value, v should be greater than y
+            x = s_a/b_a
+            y = 0.5 * x
+            # print(i)
+            # print(s_a)
+            # print(b_a)
+            # print(y)
+            v = o_p/s_a
+            # print(v)
+            h1.append([i, v, v >= y])
+        # print(sorted(h1, reverse=True, key=operator.itemgetter(1)))
+        s_h = sorted(h1, reverse=True, key=operator.itemgetter(1))
+        # print(s_h)
+        for i in s_h[:]:
+            if i[2]:
+                for ingrid in i[0].ingridients[:]:
+                    aw_arr[1].append(ingrid)
+                aw_arr[0].append(srted_piz[0].id)
+                # pop ingridients
+                self.popIngrid(i[0].ingridients,piz_list)
+                return
+
 
     # returns number of
     # pizzas available
@@ -78,13 +121,39 @@ class Pizzeria:
     def getTmNo(self, no):
         return self.tm_no[no]
 
+    # pop ingridients
+    # already in the list
+    def popIngrid(self, piz_ingrid, piz_list):
+        # pop items from remaining pizzas
+
+        for ingrid in piz_ingrid[:]:
+            arr = self.ingrid_indx[ingrid]
+            for indx in arr[:]:
+                # print(f"removing {ingrid} from {indx}")
+                piz_list[indx].ingridients.remove(ingrid)
+
+
     # select pizzas
-    def slctPizz(self, piz_list, tm_list):
-        # TODO WRITE RECURSIVE CODE HERE
-        piz_list[0].ingridients.pop(0)
-        print(len(piz_list[0].ingridients))
-        print(len(self.piz_lst[0].ingridients))
-        return
+    def slctPizz(self, piz_list, aw_arr=[[],[]]):
+        import operator
+        # sort pizzas according to the ingridients
+        # descending order
+        srted_piz = sorted(piz_list, reverse=True, key=operator.attrgetter('ingridients'))
+
+        if len(aw_arr[1]) == 0:
+            for ingrid in srted_piz[0].ingridients:
+                aw_arr[1].append(ingrid)
+            aw_arr[0].append(srted_piz[0].id)
+        else:
+            self.calc_h(srted_piz, aw_arr, piz_list)
+        # pop ingridients
+        self.popIngrid(srted_piz[0].ingridients,piz_list)
+        # print(aw_arr)
+
+        srted_piz = sorted(piz_list, reverse=True, key=operator.attrgetter('ingridients'))
+        if len(srted_piz[0].ingridients) == 0:
+            return
+        return self.slctPizz(piz_list,aw_arr)
 
     # printable form of the object
     # created
@@ -124,4 +193,4 @@ class Team:
 if __name__ == "__main__":
     data = FileReader().read('a_example') #reads file and returns the data in usable format
     pizzeria = Pizzeria('a_example')
-    pizzeria.slctPizz(data[0],data[1])
+    pizzeria.slctPizz(data[0])
