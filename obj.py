@@ -40,10 +40,12 @@ class FileReader:
         return piz_lst, tm_lst, ingrid_indx, tp_no, tm_no
 
 class Pizza:
+    counter = 0
     def __init__(self, piz_numb, ingrid_list):
+        self.id = Pizza.counter
         self.quantity = piz_numb
         self.ingridients = ingrid_list
-
+        Pizza.counter += 1
     # returns the number of ingridients
     def getIngridNo(self):
         return len(self.ingridients)
@@ -68,6 +70,45 @@ class Pizzeria:
         self.tp_no = data[3] # total number of pizzas
         self.tm_no = data[4] # [0]: team of two, [1]: team of three, [2]: team of three
 
+    # calculates heuristics
+    def calc_h(self,srted_piz,aw_arr):
+        # pizzas to be given
+        # first priority, p1
+        # the process is repeated if
+        # required
+        p1 = [i for i in srted_piz if len(i.ingridients) == len(srted_piz[0].ingridients)]
+        p2 = srted_piz[len(p1):-1]
+
+        # if true calculate heuristics,h
+        if not(len(aw_arr[1]) == 0):
+            # calculate and use heuristics to select pizza
+            # equation x(s_a/b_a) against y(o_p/s_a)
+            # slope equation: y = 0.5x
+
+            # array to hold pizzas sorted
+            # with heuristics
+            h1 = []
+            for i in srted_piz:
+                s_a = len(self.piz_lst[i.id].ingridients) #value of initial small array
+                b_a = len(aw_rr[1]) #value of initial big array
+                o_p = len(i.ingridients) #value of current array
+
+                # in order to be accepted,
+                # value, v should be greater than y
+                x = s_a/b_a
+                y = 0.5 * x
+                v = o_p/s_a
+                h1.append([i, v, value >= y])
+            for i in h1:
+                if i[3]:
+                    for ingrid in i[0].ingridients:
+                        aw_arr[1].append(ingrid)
+                    aw_arr[0].append(i[0].id)
+                    return
+            return calc_h(p2)
+        return
+
+
     # returns number of
     # pizzas available
     def getPizNo(self):
@@ -79,12 +120,17 @@ class Pizzeria:
         return self.tm_no[no]
 
     # select pizzas
-    def slctPizz(self, piz_list, tm_list):
-        # TODO WRITE RECURSIVE CODE HERE
-        piz_list[0].ingridients.pop(0)
-        print(len(piz_list[0].ingridients))
-        print(len(self.piz_lst[0].ingridients))
-        return
+    def slctPizz(self, piz_list, aw_arr=[[],[]]):
+        import operator
+        # sort pizzas according to the ingridients
+        # descending order
+        srted_piz = sorted(piz_list, reverse=True, key=operator.attrgetter('ingridients'))
+        self.calc_h(srted_piz,aw_arr)
+
+        for ingrid in srted_piz[0].ingridients:
+            aw_arr[1].append(ingrid)
+        aw_arr[0].append(srted_piz[0].id)
+        return aw_arr
 
     # printable form of the object
     # created
@@ -124,4 +170,4 @@ class Team:
 if __name__ == "__main__":
     data = FileReader().read('a_example') #reads file and returns the data in usable format
     pizzeria = Pizzeria('a_example')
-    pizzeria.slctPizz(data[0],data[1])
+    pizzeria.slctPizz(data[0])
