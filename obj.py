@@ -59,7 +59,7 @@ class Pizza:
 
     # printable form of the object
     def __repr__(self):
-        return f"pizza with {len(self.ingridients)} ingridients"
+        return f"pizza with id {self.id}"
 
 class Pizzeria:
     def __init__(self, file):
@@ -72,44 +72,43 @@ class Pizzeria:
 
     # calculates heuristics
     def calc_h(self,srted_piz,aw_arr,piz_list):
-        # pizzas to be given
-        # first priority, p1
-        # the process is repeated if
-        # required
-        p1 = [i for i in srted_piz if len(i.ingridients) == len(srted_piz[0].ingridients)]
-        p2 = srted_piz[len(p1):-1]
+        import operator
 
         # if true calculate heuristics,h
-        if not(len(aw_arr[1]) == 0):
-            # calculate and use heuristics to select pizza
-            # equation x(s_a/b_a) against y(o_p/s_a)
-            # slope equation: y = 0.5x
+        # calculate and use heuristics to select pizza
+        # equation x(s_a/b_a) against y(o_p/s_a)
+        # slope equation: y = 0.5x
 
-            # array to hold pizzas sorted
-            # with heuristics
-            h1 = []
-            for i in srted_piz:
-                s_a = len(self.piz_lst[i.id].ingridients) #value of initial small array
-                b_a = len(aw_arr[1]) #value of initial big array
-                o_p = len(i.ingridients) #value of current array
+        # array to hold pizzas sorted
+        # with heuristics
+        h1 = []
+        for i in srted_piz:
+            s_a = len(self.piz_lst[i.id].ingridients) #value of initial small array
+            b_a = len(aw_arr[1]) #value of initial big array
+            o_p = len(i.ingridients) #value of current array
 
-                # in order to be accepted,
-                # value, v should be greater than y
-                x = s_a/b_a
-                y = 0.5 * x
-                v = o_p/s_a
-                h1.append([i, v, v >= y])
-            for i in h1:
-                if i[2]:
-                    for ingrid in i[0].ingridients[:]:
-                        aw_arr[1].append(ingrid)
-                    aw_arr[0].append(i[0].id)
-                    print(aw_arr)
-                    # pop ingridients
-                    self.popIngrid(i[0].ingridients,piz_list)
-                    return
-            return calc_h(p2)
-        return
+            # in order to be accepted,
+            # value, v should be greater than y
+            x = s_a/b_a
+            y = 0.5 * x
+            # print(i)
+            # print(s_a)
+            # print(b_a)
+            # print(y)
+            v = o_p/s_a
+            # print(v)
+            h1.append([i, v, v >= y])
+        # print(sorted(h1, reverse=True, key=operator.itemgetter(1)))
+        s_h = sorted(h1, reverse=True, key=operator.itemgetter(1))
+        # print(s_h)
+        for i in s_h[:]:
+            if i[2]:
+                for ingrid in i[0].ingridients[:]:
+                    aw_arr[1].append(ingrid)
+                aw_arr[0].append(srted_piz[0].id)
+                # pop ingridients
+                self.popIngrid(i[0].ingridients,piz_list)
+                return
 
 
     # returns number of
@@ -140,16 +139,20 @@ class Pizzeria:
         # sort pizzas according to the ingridients
         # descending order
         srted_piz = sorted(piz_list, reverse=True, key=operator.attrgetter('ingridients'))
-        self.calc_h(srted_piz, aw_arr, piz_list)
 
-        for ingrid in srted_piz[0].ingridients:
-            aw_arr[1].append(ingrid)
-        aw_arr[0].append(srted_piz[0].id)
-
+        if len(aw_arr[1]) == 0:
+            for ingrid in srted_piz[0].ingridients:
+                aw_arr[1].append(ingrid)
+            aw_arr[0].append(srted_piz[0].id)
+        else:
+            self.calc_h(srted_piz, aw_arr, piz_list)
         # pop ingridients
         self.popIngrid(srted_piz[0].ingridients,piz_list)
+        # print(aw_arr)
 
-        print(aw_arr)
+        srted_piz = sorted(piz_list, reverse=True, key=operator.attrgetter('ingridients'))
+        if len(srted_piz[0].ingridients) == 0:
+            return
         return self.slctPizz(piz_list,aw_arr)
 
     # printable form of the object
