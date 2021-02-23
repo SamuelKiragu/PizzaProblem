@@ -71,7 +71,7 @@ class Pizzeria:
         self.tm_no = data[4] # [0]: team of two, [1]: team of three, [2]: team of three
 
     # calculates heuristics
-    def calc_h(self,srted_piz,aw_arr):
+    def calc_h(self,srted_piz,aw_arr,piz_list):
         # pizzas to be given
         # first priority, p1
         # the process is repeated if
@@ -90,7 +90,7 @@ class Pizzeria:
             h1 = []
             for i in srted_piz:
                 s_a = len(self.piz_lst[i.id].ingridients) #value of initial small array
-                b_a = len(aw_rr[1]) #value of initial big array
+                b_a = len(aw_arr[1]) #value of initial big array
                 o_p = len(i.ingridients) #value of current array
 
                 # in order to be accepted,
@@ -98,12 +98,15 @@ class Pizzeria:
                 x = s_a/b_a
                 y = 0.5 * x
                 v = o_p/s_a
-                h1.append([i, v, value >= y])
+                h1.append([i, v, v >= y])
             for i in h1:
-                if i[3]:
-                    for ingrid in i[0].ingridients:
+                if i[2]:
+                    for ingrid in i[0].ingridients[:]:
                         aw_arr[1].append(ingrid)
                     aw_arr[0].append(i[0].id)
+                    print(aw_arr)
+                    # pop ingridients
+                    self.popIngrid(i[0].ingridients,piz_list)
                     return
             return calc_h(p2)
         return
@@ -119,18 +122,35 @@ class Pizzeria:
     def getTmNo(self, no):
         return self.tm_no[no]
 
+    # pop ingridients
+    # already in the list
+    def popIngrid(self, piz_ingrid, piz_list):
+        # pop items from remaining pizzas
+
+        for ingrid in piz_ingrid[:]:
+            arr = self.ingrid_indx[ingrid]
+            for indx in arr[:]:
+                # print(f"removing {ingrid} from {indx}")
+                piz_list[indx].ingridients.remove(ingrid)
+
+
     # select pizzas
     def slctPizz(self, piz_list, aw_arr=[[],[]]):
         import operator
         # sort pizzas according to the ingridients
         # descending order
         srted_piz = sorted(piz_list, reverse=True, key=operator.attrgetter('ingridients'))
-        self.calc_h(srted_piz,aw_arr)
+        self.calc_h(srted_piz, aw_arr, piz_list)
 
         for ingrid in srted_piz[0].ingridients:
             aw_arr[1].append(ingrid)
         aw_arr[0].append(srted_piz[0].id)
-        return aw_arr
+
+        # pop ingridients
+        self.popIngrid(srted_piz[0].ingridients,piz_list)
+
+        print(aw_arr)
+        return self.slctPizz(piz_list,aw_arr)
 
     # printable form of the object
     # created
