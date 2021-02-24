@@ -91,21 +91,16 @@ class Pizzeria:
             # value, v should be greater than y
             x = s_a/b_a
             y = 0.5 * x
-            # print(i)
-            # print(s_a)
-            # print(b_a)
-            # print(y)
             v = o_p/s_a
-            # print(v)
             h1.append([i, v, v >= y])
         # print(sorted(h1, reverse=True, key=operator.itemgetter(1)))
         s_h = sorted(h1, reverse=True, key=operator.itemgetter(1))
-        # print(s_h)
+
         for i in s_h[:]:
             if i[2]:
                 for ingrid in i[0].ingridients[:]:
                     aw_arr[1].append(ingrid)
-                aw_arr[0].append(srted_piz[0].id)
+                aw_arr[0].append(i[0].id)
                 # pop ingridients
                 self.popIngrid(i[0].ingridients,piz_list)
                 return
@@ -148,7 +143,7 @@ class Pizzeria:
             self.calc_h(srted_piz, aw_arr, piz_list)
         # pop ingridients
         self.popIngrid(srted_piz[0].ingridients,piz_list)
-        # print(aw_arr)
+        print(aw_arr)
 
         srted_piz = sorted(piz_list, reverse=True, key=operator.attrgetter('ingridients'))
         if len(srted_piz[0].ingridients) == 0:
