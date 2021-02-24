@@ -53,6 +53,10 @@ class Pizza:
     def isEmpty(self):
         return self.quantity == 0
 
+    # restart counter
+    def rsetC():
+        Pizza.counter = 0
+
     # reduce the quantity of pizzas
     def rdQntity(self):
         self.quantity -= 1
@@ -63,12 +67,13 @@ class Pizza:
 
 class Pizzeria:
     def __init__(self, file):
+        Pizza.rsetC()
         data = FileReader().read(file)
         self.piz_lst = data[0] # list of pizzas available
-        self.tm_lst = data[1] # list of teams
+        self.tm_lst = []
         self.ingrid_indx = data[2] # index system that shows an ingridient the pizzas they are in
         self.tp_no = data[3] # total number of pizzas
-        self.tm_no = data[4] # [0]: team of two, [1]: team of three, [2]: team of three
+        self.tm_no = data[4] # [2]: team of two, [3]: team of three, [4]: team of four
 
     # calculates heuristics
     def calc_h(self,srted_piz,aw_arr,piz_list):
@@ -83,7 +88,7 @@ class Pizzeria:
         # with heuristics
         h1 = []
         for i in srted_piz:
-            s_a = len(self.piz_lst[i.id].ingridients) #value of initial small array
+            s_a = len(next(item for item in self.piz_lst if item.id == i.id).ingridients) #value of initial small array
             b_a = len(aw_arr[1]) #value of initial big array
             o_p = len(i.ingridients) #value of current array
 
@@ -106,6 +111,37 @@ class Pizzeria:
                 return
 
 
+    # check for available pizzas and deliver
+    # to teams with capacity
+    def deliverPiz(self,piz_list):
+        import copy
+        cpPizzeria = copy.copy(self)
+
+        # awaiting order
+        aw_arr = self.slctPizz(piz_list, [[],[]])
+        # tm_len = len(aw_arr)
+
+        print(aw_arr)
+
+        if len(aw_arr) == 0:
+            print("PROGRAM COMPLETED EXECUTION !")
+            print(self.tm_lst)
+            return
+
+        # add new team to list
+        # update number of teams
+        # self.tm_lst.append(Team(tm_len,aw_arr))
+        # self.tm_no[tm_len] -= 1
+
+        # removing used elements
+        # for piz_id in aw_arr[:]:
+            # self.piz_lst = [piz for piz in self.piz_lst if not(piz.id == piz_id)]
+            # cpPizzeria.piz_lst = [piz for piz in self.piz_lst if not(piz.id == piz_id)]
+        # print(cpPizzeria.piz_lst)
+
+        # return self.deliverPiz(cpPizzeria.piz_lst)
+
+
     # returns number of
     # pizzas available
     def getPizNo(self):
@@ -121,15 +157,15 @@ class Pizzeria:
     def popIngrid(self, piz_ingrid, piz_list):
         # pop items from remaining pizzas
 
-        for ingrid in piz_ingrid[:]:
+        for ingrid in piz_ingrid.copy():
             arr = self.ingrid_indx[ingrid]
-            for indx in arr[:]:
+            for indx in arr:
                 # print(f"removing {ingrid} from {indx}")
-                piz_list[indx].ingridients.remove(ingrid)
-
+                item = next(item for item in piz_list if item.id == indx)
+                item.ingridients.remove(ingrid)
 
     # select pizzas
-    def slctPizz(self, piz_list, aw_arr=[[],[]]):
+    def slctPizz(self, piz_list, aw_arr=[[],[]], count = 1):
         import operator
         # sort pizzas according to the ingridients
         # descending order
@@ -142,13 +178,28 @@ class Pizzeria:
         else:
             self.calc_h(srted_piz, aw_arr, piz_list)
         # pop ingridients
-        self.popIngrid(srted_piz[0].ingridients,piz_list)
-        print(aw_arr)
+        self.popIngrid(srted_piz[0].ingridients,piz_list.copy())
+        # print(aw_arr)
 
         srted_piz = sorted(piz_list, reverse=True, key=operator.attrgetter('ingridients'))
+
+        # check if maximum number of pizzas in a team has been reached
+        if count == 4 and self.tm_no[4] > 0:
+            return aw_arr[0]
+        # check if ingridients are over
+        # if so, checks if order is full
+        # if order is full it is returned
+        # otherwise it returns [], since no teams can be filled
         if len(srted_piz[0].ingridients) == 0:
-            return
-        return self.slctPizz(piz_list,aw_arr)
+            # print(aw_arr)
+            if count == 3 and self.tm_no[3] > 0:
+                return aw_arr[0]
+            elif count == 2 and self.tm_no[2] > 0:
+                return aw_arr[0]
+            return []
+        count += 1
+        print([i.ingridients for i in self.piz_lst])
+        return self.slctPizz(piz_list,aw_arr, count)
 
     # printable form of the object
     # created
@@ -161,9 +212,9 @@ class Pizzeria:
         """
 
 class Team:
-    def __init__(self, memb_no):
+    def __init__(self, memb_no, ord_lst = []):
         self.memb_no = memb_no # number of members available team
-        self.order_list = [] # list of team orders
+        self.order_list = ord_lst # list of team orders
 
     # gets the list of orders made by team
     def getOrders(self):
@@ -188,4 +239,4 @@ class Team:
 if __name__ == "__main__":
     data = FileReader().read('a_example') #reads file and returns the data in usable format
     pizzeria = Pizzeria('a_example')
-    pizzeria.slctPizz(data[0])
+    pizzeria.deliverPiz(data[0])
