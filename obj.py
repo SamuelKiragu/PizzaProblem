@@ -1,6 +1,8 @@
 class FileReader:
     def __init__(self):
         print("created file reader")
+
+    # reads the data in the file
     def read(self,file):
         import csv
         tp_no = 0 #total number of pizzas
@@ -38,6 +40,14 @@ class FileReader:
                 tm_lst.append(Team(n[0]))
         print("SUCCESS: READ FILE!")
         return piz_lst, tm_lst, ingrid_indx, tp_no, tm_no
+
+    # outputs the resultant data
+    def write(self, tm_lst):
+        with open('output.txt', 'w+') as output:
+            output.write(f"{len(tm_lst)}\n")
+            for team in tm_lst[:]:
+                output.write("".join([str(el)+" " for el in team.order_list]))
+                output.write("\n")
 
 class Pizza:
     counter = 0
@@ -110,7 +120,6 @@ class Pizzeria:
                 self.popIngrid(i[0].ingridients,piz_list)
                 return
 
-
     # check for available pizzas and deliver
     # to teams with capacity
     def deliverPiz(self):
@@ -125,7 +134,7 @@ class Pizzeria:
 
         if len(aw_arr) == 0:
             print("PROGRAM COMPLETED EXECUTION !")
-            print(self.tm_lst)
+            FileReader().write(self.tm_lst)
             return
 
         # add new team to list
@@ -140,7 +149,6 @@ class Pizzeria:
 
 
         return self.deliverPiz()
-
 
     # returns number of
     # pizzas available
@@ -238,6 +246,7 @@ class Team:
         return f"""Team of {self.memb_no} members created"""
 
 if __name__ == "__main__":
-    data = FileReader().read('a_example') #reads file and returns the data in usable format
-    pizzeria = Pizzeria('a_example')
+    import sys
+    file = str(sys.argv[1])
+    pizzeria = Pizzeria(file)
     pizzeria.deliverPiz()
