@@ -46,7 +46,8 @@ class FileReader:
         with open('output.txt', 'w+') as output:
             output.write(f"{len(tm_lst)}\n")
             for team in tm_lst[:]:
-                output.write("".join([str(el)+" " for el in team.order_list]))
+                output.write(str(f"{len(team.order_list)} ")+"".join([str(el)+" " for el in team.order_list]))
+                # output.write(strlen.join([str(el)+" " for el in team.order_list]))
                 output.write("\n")
 
 class Pizza:
@@ -132,7 +133,7 @@ class Pizzeria:
 
         print(aw_arr)
 
-        if len(aw_arr) == 0:
+        if len(aw_arr) == 0 or len(aw_arr) == 1:
             print("PROGRAM COMPLETED EXECUTION !")
             FileReader().write(self.tm_lst)
             return
