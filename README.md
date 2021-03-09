@@ -36,4 +36,7 @@ The following is the template for the output
    python obj\.py \./datasets/b\_little\_bit\_of\_everything\.in
    ```
  >This executes a python program obj\.py which takes a data file as a system argument variable and creates an output\.txt file to store the sorted pizzas\.
- > Replace b\_little_bit_of_everything.in
+ > Replace b\_little_bit_of_everything.in with any of the datasets in /datasets/ to run the program with a different dataset.
+
+**Here is a demonstration of running the command above**
+![output data](./resources/demo.gif)
