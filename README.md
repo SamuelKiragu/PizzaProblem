@@ -16,4 +16,4 @@ The task at hand was to help an imaginary **pizzeria** choose the **pizzas** to 
 5 distinct data sets have been provided, different data but same structure.
 This is the structure that has been used:
 <br></br>
-[input data](./resources/input_sample.png)
+[input data](https://raw.githubusercontent.com/SamuelKiragu/hash_code/master/resources/input_sample.png)
