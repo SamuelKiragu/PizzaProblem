@@ -15,5 +15,7 @@ The task at hand was to help an imaginary **pizzeria** choose the **pizzas** to 
 ## Datasets
 5 distinct data sets have been provided, different data but same structure.
 This is the structure that has been used:
-<br>
+
+
+
 ![input data](./resources/input_sample.png)
