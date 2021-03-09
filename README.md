@@ -10,3 +10,9 @@ The task at hand was to help an imaginary **pizzeria** choose the **pizzas** to 
 * Team 
 
 > For more details on what is implemented in each of the objects, check the source code and read the problem statement.
+
+
+## Datasets
+5 distinct data sets have been provided, different data but same structure.
+This is the structure that has been used:
+[input data](file:///home/kiragu/Pictures/hashcode/mistake_pizza/screenshots/hashcode6.png)
