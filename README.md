@@ -43,4 +43,4 @@ The following is the template for the output
 
 ![output data](./resources/demo.gif)
 
-<center> ##ENJOY!  :smile: :smile: </center>
+##ENJOY!  :smile: :smile:
