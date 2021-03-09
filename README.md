@@ -28,10 +28,12 @@ The following is the template for the output
 
 ## Installation and execution
 1. For you to run the program you need to have **Python** Installed.\n
-2. Once you have python, clone this repository. Here is a link to do that
-  [repository](git@github.com:SamuelKiragu/hash_code.git)\n
+2. Once you have python, clone this repository. Here is a link to do that \n
+  [repository](https://github.com/SamuelKiragu/hash_code.git)
 3. Navigate to the directory where you've cloned the repository **(use the terminal)**
 4. Run the following command
    ```
-   python obj.py ./datasets/b_little_bit_of_everything.in
+   python obj\.py \./datasets/b\_little\_bit\_of\_everything\.in
    ```
+ >This executes a python program obj\.py which takes a data file as a system argument variable and creates an output\.txt file to store the sorted pizzas\.
+ > Replace b\_little_bit_of_everything.in
