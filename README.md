@@ -5,8 +5,8 @@ organized by google.
 
 ## Problem Background and Approach
 The task at hand was to help an imaginary **pizzeria** choose the **pizzas** to deliver to hash code **teams**. Using *Object Oriented Programming*, we were able to implement the three objects:
-*Pizzeria
-*Pizza
-*Team 
+* Pizzeria
+* Pizza
+* Team 
 
 > For more details on what is implemented in each of the objects, check the source code and read the problem statement.
