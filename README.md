@@ -14,8 +14,24 @@ The task at hand was to help an imaginary **pizzeria** choose the **pizzas** to 
 
 ## Datasets
 5 distinct data sets have been provided, different data but same structure.
-This is the structure that has been used:
+This is the structure that has been used: *the description is not part of the output*
 
-
-
+### Input
+The following is the layout of the input
 ![input data](./resources/input_sample.png)
+
+### Output
+The following is the template for the output
+![output data](./resources/output.png)
+
+
+
+## Installation and execution
+1. For you to run the program you need to have **Python** Installed.\n
+2. Once you have python, clone this repository. Here is a link to do that
+  [repository](git@github.com:SamuelKiragu/hash_code.git)\n
+3. Navigate to the directory where you've cloned the repository **(use the terminal)**
+4. Run the following command
+   ```
+   python obj.py ./datasets/b_little_bit_of_everything.in
+   ```
